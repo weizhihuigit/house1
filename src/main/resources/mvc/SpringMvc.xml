@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+         http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 1.开启controller层中spring注解驱动  打开 Component Controller Service Reposity -->
+    <context:component-scan base-package="com.controller,com.potal.controller"></context:component-scan>
+
+    <!-- 2.开启springMvc特有的注解驱动  打开 @RequestMapping  @RequestParam  -->
+    <mvc:annotation-driven>
+        <mvc:message-converters><!--response.getWriter().Write()  @responsebody -->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <constructor-arg value="UTF-8"/><!--解决@responsebody响应中文乱码-->
+            </bean>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!--默认的servlet处理-->
+    <mvc:default-servlet-handler/><!--DispatcherServlet-->
+    <!-- 视图解析器  location表示路径地址 -->
+    <!-- 4.处理jsp页面所在的前缀和后缀 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 前缀,确定当前访问的页面路径地址 -->
+        <property name="prefix" value="/page/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+</beans>

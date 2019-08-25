@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/tx
+          http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 1.开启spring注解驱动 -->
+    <context:component-scan base-package="com.service"></context:component-scan>
+    <!-- 2.读取properties -->
+    <context:property-placeholder location="classpath:mybatis/properties/db.properties"/>
+    <!--<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:mybatis/properties/db.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${driver}"></property>
+        <property name="url" value="${url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>-->
+    <!--3. 配置数据库连接池 c3p0 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${driver}"/>
+        <!-- 配置Jdbc的Url -->
+        <property name="jdbcUrl" value="${url}"/>
+        <!-- 配置用户名 -->
+        <property name="user" value="${jdbc.username}"/>
+        <!-- 密码 -->
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!-- 4.配置事务管理器 -->
+    <bean id="tx"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 事务管理数据库连接池 -->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!--5. 开启事务的注解驱动 @Transactional  -->
+    <tx:annotation-driven transaction-manager="tx"/>
+
+    <!-- 6.spring管理mybatis配置文件 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--dataSource属性指定要用到的连接池 ref映射的是id=dataSource的bean标签，读取连接数据库信息-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--configLocation属性指定mybatis的核心配置文件，管理mybatis配置文件-->
+        <property name="configLocation" value="classpath:mybatis/sqlMapConfig.xml"/>
+        <!-- 所有配置的mapper文件,mybatis的实体类配置文件所有的sql映射文件 -->
+        <property name="mapperLocations" value="classpath:mybatis/mapper/*.xml"></property>
+    </bean>
+
+    <!-- 7.spring管理mybatis映射接口和sql映射文件之间关联关系 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+    </bean>
+
+    <!--  文件上传的配置 若没有该配置 MultipartFile file对象将为null-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="maxUploadSizePerFile" value="1048576"/>
+        <property name="maxInMemorySize" value="1048576"/>
+    </bean>
+</beans>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0">
+  <!--web.xml加载springMvc 和spring 关联 mybatis
+全局监听
+骑马异步走
+servlet优先补充维生素C-->
+  <!-- 1.加载 springmvc 2.加载spring -->
+  <!-- 加载spring配置文件 -->
+  <!-- 关联到spring主配置文件的路径地址  classpath根目录-->
+  <context-param><!--全局-->
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:spring/applicationContext.xml</param-value>
+  </context-param>
+
+  <!-- 配置监听器加载spring的配置文件 -->
+  <listener><!--监听-->
+    <!--初始化方法中 把context 对象 存进了 web最大的域对象中 -->
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <!-- 配置过滤器，过滤编码格式 为utf-8,只支持post提交-->
+  <filter><!--骑马—编码-->
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <!--异步支持  -->
+    <async-supported>true</async-supported><!--异步走-->
+    <!-- 初始化 编码格式为UTF-8,只适用于post提交-->
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!-- 加载springmvc配置文件 -->
+  <!-- 配置DispatcherServlet，来加载springmvc的配置
+拦截所有的请求 都进入 spring中的 DispatcherServlet
+1.解析请求路径
+2.分配 给 对应的方法来处理请求
+3.试图解析器 来 找到 对应的jsp
+-->
+  <!--servlet优先加载mvc-->
+  <servlet>
+    <servlet-name>DispatcherServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:mvc/SpringMvc.xml</param-value>
+    </init-param>
+    <!-- 启动优先加载 -->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DispatcherServlet</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  <!--
+/包含所有的servlet请求路径
+/*包含所有的servlet请求路径和有后缀名的资源路径.jsp
+-->
+</web-app>

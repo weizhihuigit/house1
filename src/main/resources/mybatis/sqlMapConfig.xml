@@ -1,0 +1,21 @@
+<?xml version="1.0"   encoding="UTF-8"?>
+<!DOCTYPE configuration   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!--    可以在控制台输出日志信息：sql语句和参数 -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+    <!-- 表示类型别名   库-->
+    <typeAliases>
+        <!-- 每一个类型的别名  type属性表示别名对应的类型地址 alias表示起的别名-->
+        <typeAlias type="java.util.List" alias="list"/>
+        <!-- package表示包，利用包的形式进行扫描包之下的所有的类，别名就是当前类名 -->
+        <package name="com.pojo"/>
+    </typeAliases>
+    <!--分页插件-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+        </plugin>
+    </plugins>
+</configuration>   
